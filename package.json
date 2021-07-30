@@ -1,0 +1,22 @@
+{
+  "name": "gilded-rose-kata-js",
+  "version": "1.0.0",
+  "description": "Gilded Rose kata in JavaScript with Jest",
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "kata",
+    "refactor",
+    "gilded-rose"
+  ],
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://github.com/emilybache/GildedRose-Refactoring-Kata",
+  "devDependencies": {
+    "jest": "^27.0.6"
+  }
+}
