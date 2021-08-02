@@ -1,71 +1,85 @@
 const { Shop, Item } = require("../src/gilded_rose");
 
-describe("Gilded Rose", function () {
-  describe("Normal items", () => {
-    it("should take the correct name", function () {
-      const initialSellIn = 10;
-      const initialQuality = 20;
+expect.extend({
+  toHaveThisValuesInDays(initialItem, expectedArray) {
+    const store = new Shop([initialItem]);
+    const results = expectedArray.map((expectedValue) => {
+      const result = (initialItem.quality === expectedValue.quality &&
+        initialItem.sellIn === expectedValue.sellIn)
+      store.updateQuality();
+      return result;
+    });
+    return {
+      pass: results.every((val) => val),
+      message:() => "FAIL"
+    }
+  }
+})
 
-      const gildedRose = new Shop([
-        new Item("+5 Dexterity Vest", initialSellIn, initialQuality),
-      ]);
-      const items = gildedRose.updateQuality();
-      expect(items[0].name).toBe("+5 Dexterity Vest");
+describe("Gilded Rose", function () {
+  describe("Items", () => {
+    it("Should create", () => {
+      const item = new Item("+5 Dexterity Vest", 0, 0);
+      expect(item).toBeTruthy();
     });
 
+    describe("Initials properties", () => {
+      it("Initials properties", () => {
+        const item = new Item("+5 Dexterity Vest", 0, 0);
+        expect(item.name).toBe("+5 Dexterity Vest");
+        expect(item.sellIn).toBe(0);
+        expect(item.quality).toBe(0);
+      });
+    })
+  })
+
+  describe("Shops", () => {
+    it("Should create", () => {
+      const item = new Item("+5 Dexterity Vest", 0, 0);
+      const store = new Shop([item])
+      expect(store).toBeTruthy();
+    });
+
+    it("Should the correct quantity of items", () => {
+      const item1 = new Item("+5 Dexterity Vest", 0, 0);
+      const item2 = new Item("+5 Dexterity Vest", 0, 0);
+      const item3 = new Item("+5 Dexterity Vest", 0, 0);
+      const store = new Shop([item1, item2, item3])
+      expect(store.items.length).toBe(3);
+    });
+  })
+
+
+  describe("Normal items", () => {
     it("should decrease sellIn and quality on a normal item", function () {
-      const initialSellIn = 10;
-      const initialQuality = 20;
+      const expectedData = [
+        { sellIn: 10, quality: 10 },
+        { sellIn: 9, quality: 9 },
+        { sellIn: 8, quality: 8 },
+      ];
 
-      const gildedRose = new Shop([
-        new Item("+5 Dexterity Vest", initialSellIn, initialQuality),
-      ]);
-
-      for (let i = 0; i < initialSellIn; i++) {
-        const items = gildedRose.updateQuality();
-        expect(items[0].sellIn).toBe(initialSellIn - i - 1);
-        expect(items[0].quality).toBe(initialQuality - i - 1);
-      }
+      const initialItem = new Item('testItem', 10, 10)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
     });
 
     it("should decrease quality twice on a item with a sellIn < 0", function () {
-      // Creating the expected data
-      // Initial passed days = 0
-      // Qualities = 8-6-4
       const expectedData = [
         { sellIn: 0, quality: 8 },
         { sellIn: -1, quality: 6 },
         { sellIn: -2, quality: 4 },
       ];
-
-      const initialItem = new Item("+5 Dexterity Vest", 0, 8);
-      const gildedRose = new Shop([initialItem]);
-
-      expectedData.map((result) => {
-        expect(initialItem.quality).toBe(result.quality);
-        expect(initialItem.sellIn).toBe(result.sellIn);
-        gildedRose.updateQuality();
-      });
+      const initialItem = new Item('+5 Dexterity Vest', 0, 8)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
     });
 
     it("should stop decreasing minimun quality on 0 and continue decreasing sell in days", function () {
-      // Creating the expected data
-      // Initial passed days = 0
-      // Qualities = 8-6-4
       const expectedData = [
         { sellIn: 0, quality: 0 },
         { sellIn: -1, quality: 0 },
         { sellIn: -2, quality: 0 },
       ];
-
-      const initialItem = new Item("+5 Dexterity Vest", 0, 0);
-      const gildedRose = new Shop([initialItem]);
-
-      expectedData.map((result) => {
-        expect(initialItem.quality).toBe(0);
-        expect(initialItem.sellIn).toBe(result.sellIn);
-        gildedRose.updateQuality();
-      });
+      const initialItem = new Item('+5 Dexterity Vest', 0, 0)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
     });
   });
 
@@ -76,14 +90,8 @@ describe("Gilded Rose", function () {
         { sellIn: 9, quality: 21 },
         { sellIn: 8, quality: 22 },
       ];
-      const initialItem = new Item("Aged Brie", 10, 20);
-      const gildedRose = new Shop([initialItem]);
-
-      expectedData.forEach((expectedValues) => {
-        expect(initialItem.sellIn).toBe(expectedValues.sellIn);
-        expect(initialItem.quality).toBe(expectedValues.quality);
-        gildedRose.updateQuality();
-      });
+      const initialItem = new Item("Aged Brie", 10, 20)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
     });
 
     it("should decrease sellIn and increase the quality twice once the sellIn is less than 0 on a aged item", function () {
@@ -92,14 +100,8 @@ describe("Gilded Rose", function () {
         { sellIn: -1, quality: 22 },
         { sellIn: -2, quality: 24 },
       ];
-      const initialItem = new Item("Aged Brie", 0, 20);
-      const gildedRose = new Shop([initialItem]);
-
-      expectedData.forEach((expectedValues) => {
-        expect(initialItem.sellIn).toBe(expectedValues.sellIn);
-        expect(initialItem.quality).toBe(expectedValues.quality);
-        gildedRose.updateQuality();
-      });
+      const initialItem = new Item("Aged Brie", 0, 20)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
     });
 
     it("should decrease sellIn and stop increasing the quality on a aged item on 50", function () {
@@ -108,14 +110,8 @@ describe("Gilded Rose", function () {
         { sellIn: -1, quality: 50 },
         { sellIn: -2, quality: 50 },
       ];
-      const initialItem = new Item("Aged Brie", 0, 49);
-      const gildedRose = new Shop([initialItem]);
-
-      expectedData.forEach((expectedValues) => {
-        expect(initialItem.sellIn).toBe(expectedValues.sellIn);
-        expect(initialItem.quality).toBe(expectedValues.quality);
-        gildedRose.updateQuality();
-      });
+      const initialItem = new Item("Aged Brie", 0, 49)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
     });
   });
 
@@ -127,14 +123,8 @@ describe("Gilded Rose", function () {
         { sellIn: 0, quality: 49 },
         { sellIn: 0, quality: 49 },
       ];
-      const initialItem = new Item("Sulfuras, Hand of Ragnaros", 0, 49);
-      const gildedRose = new Shop([initialItem]);
-
-      expectedData.forEach((expectedValues) => {
-        expect(initialItem.sellIn).toBe(expectedValues.sellIn);
-        expect(initialItem.quality).toBe(expectedValues.quality);
-        gildedRose.updateQuality();
-      });
+      const initialItem = new Item("Sulfuras, Hand of Ragnaros", 0, 49)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
     });
   })
 
@@ -147,14 +137,8 @@ describe("Gilded Rose", function () {
           { sellIn: 11, quality: 22 },
           { sellIn: 10, quality: 23 },
         ];
-        const initialItem = new Item("Backstage passes to a TAFKAL80ETC concert", 13, 20);
-        const gildedRose = new Shop([initialItem]);
-  
-        expectedData.forEach((expectedValues) => {
-          expect(initialItem.sellIn).toBe(expectedValues.sellIn);
-          expect(initialItem.quality).toBe(expectedValues.quality);
-          gildedRose.updateQuality();
-        });
+      const initialItem = new Item("Backstage passes to a TAFKAL80ETC concert", 13, 20)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
       });
 
       it("When the sellIn is 10 days or less it should icrease by 2 per day", function () {
@@ -166,14 +150,8 @@ describe("Gilded Rose", function () {
           { sellIn: 6, quality: 28 },
           { sellIn: 5, quality: 30 },
         ];
-        const initialItem = new Item("Backstage passes to a TAFKAL80ETC concert", 10, 20);
-        const gildedRose = new Shop([initialItem]);
-  
-        expectedData.forEach((expectedValues) => {
-          expect(initialItem.sellIn).toBe(expectedValues.sellIn);
-          expect(initialItem.quality).toBe(expectedValues.quality);
-          gildedRose.updateQuality();
-        });
+      const initialItem = new Item("Backstage passes to a TAFKAL80ETC concert", 10, 20)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
       });
 
       it("When the sellIn is 5 days or less it should icrease by 3 per day", function () {
@@ -184,14 +162,8 @@ describe("Gilded Rose", function () {
           { sellIn: 2, quality: 29 },
           { sellIn: 1, quality: 32 },
         ];
-        const initialItem = new Item("Backstage passes to a TAFKAL80ETC concert", 5, 20);
-        const gildedRose = new Shop([initialItem]);
-  
-        expectedData.forEach((expectedValues) => {
-          expect(initialItem.sellIn).toBe(expectedValues.sellIn);
-          expect(initialItem.quality).toBe(expectedValues.quality);
-          gildedRose.updateQuality();
-        });
+      const initialItem = new Item("Backstage passes to a TAFKAL80ETC concert", 5, 20)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
       });
 
 
@@ -201,14 +173,8 @@ describe("Gilded Rose", function () {
           { sellIn: 0, quality: 23 },
           { sellIn: -1, quality: 0 },
         ];
-        const initialItem = new Item("Backstage passes to a TAFKAL80ETC concert", 1, 20);
-        const gildedRose = new Shop([initialItem]);
-  
-        expectedData.forEach((expectedValues) => {
-          expect(initialItem.sellIn).toBe(expectedValues.sellIn);
-          expect(initialItem.quality).toBe(expectedValues.quality);
-          gildedRose.updateQuality();
-        });
+      const initialItem = new Item("Backstage passes to a TAFKAL80ETC concert", 1, 20)
+      expect(initialItem).toHaveThisValuesInDays(expectedData)
       });
     })
   })
