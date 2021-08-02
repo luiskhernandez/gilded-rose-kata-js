@@ -2,6 +2,7 @@ const ITEMS_TYPES = {
   AGED_BRICE: "Aged Brie",
   BACKSTAGE_CONCERT: "Backstage passes to a TAFKAL80ETC concert",
   SULFURAS: "Sulfuras, Hand of Ragnaros",
+  CONJURED: "Conjured",
 };
 
 class Item {
@@ -45,6 +46,15 @@ class Shop {
             this.items[i].quality += this.items[i].sellIn < 0 ? 2 : 1;
           }
           break;
+        case ITEMS_TYPES.CONJURED:
+          {
+            this.items[i].sellIn--;
+            this.items[i].quality -= 2;
+            if (this.items[i].quality < 0) {
+              this.items[i].quality = 0;
+            }
+          }
+          break
         default: {
           this.items[i].sellIn--;
           this.items[i].quality -= this.items[i].sellIn < 0 ? 2 : 1;
