@@ -132,4 +132,16 @@ describe("Update Quality function", () => {
     });
   });
 
+  it("Conjured items degrade in Quality twice as fast as normal items", () => {
+    const gildedRose = new Shop([new Item("Conjured Mana Cake", 2, 30)]);
+    gildedRose.updateQuality();
+    expect(gildedRose.items[0].quality).toBe(28);
+    gildedRose.updateQuality();
+    expect(gildedRose.items[0].quality).toBe(26);
+    gildedRose.updateQuality();
+    expect(gildedRose.items[0].quality).toBe(22);
+    gildedRose.updateQuality();
+    expect(gildedRose.items[0].quality).toBe(18);
+  });
+
 });

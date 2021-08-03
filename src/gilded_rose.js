@@ -18,12 +18,13 @@ class Shop {
         ? 2 : item.sellIn > 0
         ? 3 : -item.quality
     ),
+    'Conjured Mana Cake': (item) => item.sellIn > 0 ? -2 : -4,
     default: (item) => item.sellIn > 0 ? -1 : -2,
   };
   updateQuality() {
     this.items.forEach((item) => {
       if(item.name === "Sulfuras, Hand of Ragnaros") return;
-      const qualityDiff = (this.validators[item.name] && this.validators[item.name](item)) || this.validators.default(item);
+      const qualityDiff = (this.validators[item.name] || this.validators.default)(item);
       item.sellIn--;
 
       item.quality = item.quality + qualityDiff < 0
