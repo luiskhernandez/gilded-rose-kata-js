@@ -1,4 +1,3 @@
-
 const { Shop, Item } = require("./gilded_rose");
 
 const items = [
@@ -21,6 +20,6 @@ const gildedRose = new Shop(items);
 console.log("Lest go!");
 for (let day = 0; day < days; day++) {
   console.log(`\n-------- day ${day} --------`);
-  console.table(items)
+  console.table(items);
   gildedRose.updateQuality();
 }
