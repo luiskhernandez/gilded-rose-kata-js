@@ -103,6 +103,15 @@ describe("Gilded Rose", function() {
     });
   })
 
+  describe("Conjured tests", function(){   
+    it("conjured decreases quality twice as fast", function() {
+      const gildedRose = new Shop([new Item("Conjured", 20, 20)]);
+      const items = gildedRose.updateQuality();    
+      expect(items[0].sellIn).toBe(19);
+      expect(items[0].quality).toBe(18);
+    });
+  })
+
 
   
 });
