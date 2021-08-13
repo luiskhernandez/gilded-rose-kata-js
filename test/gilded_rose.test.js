@@ -49,11 +49,11 @@ describe("Gilded Rose", function() {
     })
   })
   it("'Sulfuras', being a legendary item, never has to be sold or decreases in Quality", function () {
-    const newItem = [new Item("Sulfuras, Hand of Ragnaros", 2, 3)];
+    const newItem = [new Item("Sulfuras, Hand of Ragnaros", 2, 80)];
     const gildedRose = new Shop(newItem);
     const items = gildedRose.updateQuality();
     expect(items[0].sellIn).toBe(2);
-    expect(items[0].quality).toBe(3);
+    expect(items[0].quality).toBe(80);
   })
   describe("Entrada al Backstage", function () {
     it("Quality increases by 1 like Aged Brie when there are more than 10 days", function () {
