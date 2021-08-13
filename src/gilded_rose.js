@@ -36,10 +36,12 @@ class Shop {
       } else {
         item.sellIn--;
         item.quality--;
-
+        if (item.name === "Conjured Mana Cake") item.quality--;
+        
         if (item.sellIn < 0) {
           item.quality--;
-          }
+          if (item.name === "Conjured Mana Cake") item.quality--;
+        }
         if (item.quality < 0) {
           item.quality = 0;
         }

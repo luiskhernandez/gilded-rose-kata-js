@@ -81,4 +81,18 @@ describe("Gilded Rose", function() {
       expect(items[0].quality).toBe(0);
     })
   })
+  describe("Conjured", function () {
+    it("Items degrade in Quality twice as fast as normal items (by 2 with positive sellIn)", function () {
+      const newItem = [new Item("Conjured Mana Cake", 3, 6)];
+      const gildedRose = new Shop(newItem);
+      const items = gildedRose.updateQuality();
+      expect(items[0].quality).toBe(4);
+    })
+    it("Items degrade in Quality twice as fast as normal items (by 4 with negative sellIn)", function () {
+      const newItem = [new Item("Conjured Mana Cake", -3, 6)];
+      const gildedRose = new Shop(newItem);
+      const items = gildedRose.updateQuality();
+      expect(items[0].quality).toBe(2);
+    })
+  })
 });
