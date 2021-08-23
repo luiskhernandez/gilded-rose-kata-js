@@ -1,3 +1,9 @@
+const NAME_OF_ITEMS = {
+  AGED_BRIE: 'Aged Brie',
+  SULFURAS: 'Sulfuras, Hand of Ragnaros',
+  BACKSTAGE: 'Backstage passes to a TAFKAL80ETC concert',
+  CONJURED: 'Conjured Mana Cake',
+}
 class Item {
   constructor(name, sellIn, quality){
     this.name = name;
@@ -7,55 +13,55 @@ class Item {
 }
 
 class Shop {
-  constructor(items=[]){
+  constructor(items = []){
     this.items = items;
-  }
-  updateQuality() {
-    for (let i = 0; i < this.items.length; i++) {
-      if (this.items[i].name != 'Aged Brie' && this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-        if (this.items[i].quality > 0) {
-          if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-            this.items[i].quality = this.items[i].quality - 1;
-          }
+    this.validation = {
+      [NAME_OF_ITEMS.AGED_BRIE]: (item) => {
+        const quality = item.quality
+        const sellIn = item.sellIn
+        if (quality >= 50) {
+          item.quality = 50
+          return
         }
-      } else {
-        if (this.items[i].quality < 50) {
-          this.items[i].quality = this.items[i].quality + 1;
-          if (this.items[i].name == 'Backstage passes to a TAFKAL80ETC concert') {
-            if (this.items[i].sellIn < 11) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1;
-              }
-            }
-            if (this.items[i].sellIn < 6) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1;
-              }
-            }
-          }
+
+        item.quality = sellIn < 0 ? (quality + 2) : (quality + 1)
+      },
+      [NAME_OF_ITEMS.BACKSTAGE]: item => {
+        const quality = item.quality
+        item.quality = calculateQuality({ quality, sellIn: item.sellIn })
+
+        function calculateQuality({ quality, sellIn }) {
+          quality = sellIn <= 5 ? (quality + 3) : quality
+          quality = sellIn < 10 && sellIn > 5 ? (quality + 2) : quality
+          quality = sellIn >= 10 ? (quality + 1) : quality
+          quality = sellIn < 0 ? 0 : quality
+
+          return quality > 50 ? 50 : quality
         }
-      }
-      if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-        this.items[i].sellIn = this.items[i].sellIn - 1;
-      }
-      if (this.items[i].sellIn < 0) {
-        if (this.items[i].name != 'Aged Brie') {
-          if (this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-            if (this.items[i].quality > 0) {
-              if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-                this.items[i].quality = this.items[i].quality - 1;
-              }
-            }
-          } else {
-            this.items[i].quality = this.items[i].quality - this.items[i].quality;
-          }
-        } else {
-          if (this.items[i].quality < 50) {
-            this.items[i].quality = this.items[i].quality + 1;
-          }
+
+      },
+      [NAME_OF_ITEMS.CONJURED]: item => {
+        item.quality = item.quality - 2
+      },
+      default: item => {
+        if (item.sellIn < 0) {
+          const quality = item.quality
+          item.quality = quality > 0 ? quality - 2 : 0
+          return
         }
+  
+        item.quality--
       }
     }
+  }
+
+  updateQuality() {
+    this.items.forEach(item =>{
+      if (item.name === NAME_OF_ITEMS.SULFURAS) return
+      item.sellIn--
+      const validator = this.validation[item.name] || this.validation['default']
+      validator(item)
+    })
 
     return this.items;
   }
